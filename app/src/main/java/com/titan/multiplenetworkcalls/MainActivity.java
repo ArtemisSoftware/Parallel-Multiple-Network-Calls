@@ -9,13 +9,20 @@ import com.google.gson.GsonBuilder;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -31,17 +38,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initCommunications();
-        callSingleEndpoint();
+        //callSingleEndpoint();
+        callEndpoints();
     }
 
 
     private void callSingleEndpoint(){
 
-        CryptoCurrencyApi cryptocurrencyService = retrofit.create(CryptoCurrencyApi.class);
+        CryptoCurrencyApi cryptoCurrencyApi = retrofit.create(CryptoCurrencyApi.class);
 
-        Observable<Crypto> cryptoObservable = cryptocurrencyService.getCoinData("btc");
 
-        cryptoObservable.subscribeOn(Schedulers.io())
+        cryptoCurrencyApi.getCoinData("btc")
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Crypto>() {
                     @Override
@@ -57,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.d("onError " + e.getMessage());
+                        Timber.e("onError " + e.getMessage());
                     }
 
                     @Override
@@ -65,7 +73,46 @@ public class MainActivity extends AppCompatActivity {
                         Timber.d("onComplete");
                     }
                 });
+
     }
+
+
+    private void callEndpoints() {
+
+        CryptoCurrencyApi cryptoCurrencyApi = retrofit.create(CryptoCurrencyApi.class);
+
+        List<Observable<Crypto>> tasks = new ArrayList<>();
+        tasks.add(cryptoCurrencyApi.getCoinData("btc"));
+        tasks.add(cryptoCurrencyApi.getCoinData("eth"));
+
+        Observable<Observable<Crypto>> taskObservable = Observable // create a new Observable object
+                .fromIterable(tasks) // apply 'fromIterable' operator
+                .subscribeOn(Schedulers.io()) // designate worker thread (background)
+                .observeOn(AndroidSchedulers.mainThread()); // designate observer thread (main thread)
+
+        taskObservable.subscribe(new Observer<Observable<Crypto>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Timber.d("onSubscribe");
+            }
+
+            @Override
+            public void onNext(Observable<Crypto> cryptoObservable) {
+                Timber.d("onNext: " + cryptoObservable.toString());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("onError " + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.d("onComplete");
+            }
+        });
+    }
+
 
     private void initCommunications(){
 
