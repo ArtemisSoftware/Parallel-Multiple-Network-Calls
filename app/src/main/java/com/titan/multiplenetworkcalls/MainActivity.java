@@ -1,11 +1,14 @@
 package com.titan.multiplenetworkcalls;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
 
@@ -32,12 +35,16 @@ public class MainActivity extends AppCompatActivity {
 
     Retrofit retrofit;
 
+    RecyclerView recyclerView;
+    RecyclerViewAdapter recyclerViewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initCommunications();
+        initRecyclerView();
         //callSingleEndpoint();
         callEndpoints();
     }
@@ -81,14 +88,56 @@ public class MainActivity extends AppCompatActivity {
 
         CryptoCurrencyApi cryptoCurrencyApi = retrofit.create(CryptoCurrencyApi.class);
 
+        Observable<Crypto> btcObservable = cryptoCurrencyApi.getCoinData("btc");
+
+        Observable<Crypto> ethObservable = cryptoCurrencyApi.getCoinData("eth");
+
+        Observable.merge(btcObservable, ethObservable)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Crypto>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Timber.d("onSubscribe");
+                    }
+
+                    @Override
+                    public void onNext(Crypto markets) {
+                        Timber.d("onNext: " + markets.toString());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e("onError " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Timber.d("onComplete");
+                    }
+                });
+
+
+/*
         List<Observable<Crypto>> tasks = new ArrayList<>();
         tasks.add(cryptoCurrencyApi.getCoinData("btc"));
         tasks.add(cryptoCurrencyApi.getCoinData("eth"));
 
+
+        Observable<List<Crypto.Market>> btcObservable = cryptoCurrencyApi.getCoinData("btc")
+                .toList().toObservable();
+
+
         Observable<Observable<Crypto>> taskObservable = Observable // create a new Observable object
                 .fromIterable(tasks) // apply 'fromIterable' operator
                 .subscribeOn(Schedulers.io()) // designate worker thread (background)
-                .observeOn(AndroidSchedulers.mainThread()); // designate observer thread (main thread)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<Observable<Crypto>, Observable<Crypto>>() {
+                    @Override
+                    public Observable<Crypto> apply(Observable<Crypto> cryptoObservable) throws Exception {
+                        return  Observable.fromIterable(cryptoObservable.);
+                    }
+                }); // designate observer thread (main thread)
 
         taskObservable.subscribe(new Observer<Observable<Crypto>>() {
             @Override
@@ -98,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNext(Observable<Crypto> cryptoObservable) {
+
+
                 Timber.d("onNext: " + cryptoObservable.toString());
             }
 
@@ -111,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 Timber.d("onComplete");
             }
         });
+        */
     }
 
 
@@ -128,5 +180,12 @@ public class MainActivity extends AppCompatActivity {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
+    }
+
+    private void initRecyclerView(){
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewAdapter = new RecyclerViewAdapter();
+        recyclerView.setAdapter(recyclerViewAdapter);
     }
 }
