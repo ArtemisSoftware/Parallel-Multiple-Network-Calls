@@ -45,4 +45,14 @@ public class Crypto {
         public List<Market> markets = null;
 
     }
+
+    @Override
+    public String toString() {
+        return "Crypto{" +
+                "ticker=" + ticker +
+                ", timestamp=" + timestamp +
+                ", success=" + success +
+                ", error='" + error + '\'' +
+                '}';
+    }
 }
