@@ -20,12 +20,11 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -88,81 +87,108 @@ public class MainActivity extends AppCompatActivity {
 
         CryptoCurrencyApi cryptoCurrencyApi = retrofit.create(CryptoCurrencyApi.class);
 
-        Observable<Crypto> btcObservable = cryptoCurrencyApi.getCoinData("btc");
 
-        Observable<Crypto> ethObservable = cryptoCurrencyApi.getCoinData("eth");
+        List<Observable<?>> requests = new ArrayList<>();
 
-        Observable.merge(btcObservable, ethObservable)
-                .subscribeOn(Schedulers.computation())
+        // Make a collection of all requests you need to call at once, there can be any number of requests, not only 3. You can have 2 or 5, or 100.
+
+        Observable<List<Object>> responseOneObservable_1 = cryptoCurrencyApi.getCoinData("btc")
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Crypto>() {
+                .map(new Function<Crypto, Observable<Crypto.Market>>() {
+                    @Override
+                    public Observable<Crypto.Market> apply(Crypto crypto) throws Exception {
+                        return Observable.fromIterable(crypto.ticker.markets);
+                    }
+                })
+                .flatMap(new Function<Observable<Crypto.Market>, ObservableSource<?>>() {
+                    @Override
+                    public ObservableSource<?> apply(Observable<Crypto.Market> marketObservable) throws Exception {
+                        return marketObservable;
+                    }
+                })
+                .filter(new Predicate<Object>() {
+                    @Override
+                    public boolean test(Object o) throws Exception {
+                        ((Crypto.Market) o).coinName = "btc";
+                        return true;
+                    }
+                })
+                .toList().toObservable();
+
+        Observable<List<Object>> responseOneObservable_2 = cryptoCurrencyApi.getCoinData("eth")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<Crypto, Observable<Crypto.Market>>() {
+                    @Override
+                    public Observable<Crypto.Market> apply(Crypto crypto) throws Exception {
+                        return Observable.fromIterable(crypto.ticker.markets);
+                    }
+                })
+                .flatMap(new Function<Observable<Crypto.Market>, ObservableSource<?>>() {
+                    @Override
+                    public ObservableSource<?> apply(Observable<Crypto.Market> marketObservable) throws Exception {
+                        return marketObservable;
+                    }
+                })
+                .filter(new Predicate<Object>() {
+                    @Override
+                    public boolean test(Object o) throws Exception {
+                        ((Crypto.Market) o).coinName = "eth";
+                        return true;
+                    }
+                })
+                .toList().toObservable();
+
+
+        requests.add(responseOneObservable_1);
+        requests.add(responseOneObservable_2);
+
+
+
+         Observable.zip(requests,
+                 new Function<Object[],  List<Crypto.Market>>() {
+                    @Override
+                    public  List<Crypto.Market> apply(Object[] objects) throws Exception {
+
+                        Timber.d("apply: " + objects);
+
+                        ArrayList<Crypto.Market> mm = new ArrayList<>();
+                        for(int i = 0; i < objects.length; ++i){
+                            mm.addAll((ArrayList<Crypto.Market>) objects[i]);
+                        }
+
+                        return mm;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Crypto.Market>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Timber.d("onSubscribe");
+                        Timber.d("onSubscribe: ");
                     }
 
                     @Override
-                    public void onNext(Crypto markets) {
-                        Timber.d("onNext: " + markets.toString());
+                    public void onNext(List<Crypto.Market> cryptos) {
+                        Timber.d("onNext: " + cryptos);
+
+                        recyclerViewAdapter.setData(cryptos);
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e("onError " + e.getMessage());
+                        Timber.d("onError: " + e);
                     }
 
                     @Override
                     public void onComplete() {
-                        Timber.d("onComplete");
+                        Timber.d("onComplete: ");
                     }
                 });
 
 
-/*
-        List<Observable<Crypto>> tasks = new ArrayList<>();
-        tasks.add(cryptoCurrencyApi.getCoinData("btc"));
-        tasks.add(cryptoCurrencyApi.getCoinData("eth"));
-
-
-        Observable<List<Crypto.Market>> btcObservable = cryptoCurrencyApi.getCoinData("btc")
-                .toList().toObservable();
-
-
-        Observable<Observable<Crypto>> taskObservable = Observable // create a new Observable object
-                .fromIterable(tasks) // apply 'fromIterable' operator
-                .subscribeOn(Schedulers.io()) // designate worker thread (background)
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new Function<Observable<Crypto>, Observable<Crypto>>() {
-                    @Override
-                    public Observable<Crypto> apply(Observable<Crypto> cryptoObservable) throws Exception {
-                        return  Observable.fromIterable(cryptoObservable.);
-                    }
-                }); // designate observer thread (main thread)
-
-        taskObservable.subscribe(new Observer<Observable<Crypto>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Timber.d("onSubscribe");
-            }
-
-            @Override
-            public void onNext(Observable<Crypto> cryptoObservable) {
-
-
-                Timber.d("onNext: " + cryptoObservable.toString());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e("onError " + e.getMessage());
-            }
-
-            @Override
-            public void onComplete() {
-                Timber.d("onComplete");
-            }
-        });
-        */
     }
 
 

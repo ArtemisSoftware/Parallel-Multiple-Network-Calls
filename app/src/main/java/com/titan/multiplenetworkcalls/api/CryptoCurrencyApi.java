@@ -15,6 +15,4 @@ public interface CryptoCurrencyApi {
     @GET("{coin}-usd")
     Observable<Crypto> getCoinData(@Path("coin") String coin);
 
-    @GET("{coin}-usd")
-    Observable<List<Crypto>> getCoinData_(@Path("coin") String coin);
 }
