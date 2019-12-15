@@ -20,4 +20,5 @@ public interface CryptoCurrencyApi {
     @GET("{coin}-usd")
     Observable<Response<Crypto>> getCoinDataDiff(@Path("coin") String coin);
 
+    //http://159.89.185.115:3500/api/items
 }

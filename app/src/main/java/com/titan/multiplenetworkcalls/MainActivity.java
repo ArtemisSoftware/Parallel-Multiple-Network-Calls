@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
         //callSingleEndpoint();
         //callEndpoints();
-        //callForResponseCode();
-        callEndpoints_v2();
+        callForResponseCode();
+        //callEndpoints_v2();
     }
 
     private void callEndpoints_v2(){
@@ -280,43 +280,58 @@ public class MainActivity extends AppCompatActivity {
     private void callForResponseCode(){
 
         CryptoCurrencyApi cryptoCurrencyApi = retrofit.create(CryptoCurrencyApi.class);
-/*
-        cryptoCurrencyApi.getCoinDataDiff("btc")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<Crypto>>() {
-                    @Override
-                    public void onSubscribe(Subscription s) {
-
-                    }
-
-                    @Override
-                    public void onNext(Response<Crypto> cryptoResponse) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-        */
+        CryptoCurrencyApi cryptoCurrencyApi_erro = retrofit_erro.create(CryptoCurrencyApi.class);
 
 
         //cryptoCurrencyApi.getCoinDataDiff("btc")
 
         List<Observable<?>> requests = new ArrayList<>();
 
+        requests.add(cryptoCurrencyApi.getCoinData("btc"));
         requests.add(cryptoCurrencyApi.getCoinDataDiff("btc"));
         requests.add(cryptoCurrencyApi.getCoinDataDiff("eth"));
+        //requests.add(cryptoCurrencyApi_erro.getCoinData("eth"));
+
+
+
+        // Zip all requests with the Function, which will receive the results.
+        Observable.zip(
+                requests,
+                new Function<Object[], Object>() {
+                    @Override
+                    public Object apply(Object[] objects) throws Exception {
+                        // Objects[] is an array of combined results of completed requests
+
+                        // do something with those results and emit new event
+                        return new Object();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                // After all requests had been performed the next observer will receive the Object, returned from Function
+                .subscribe(
+                        // Will be triggered if all requests will end successfully (4xx and 5xx also are successful requests too)
+                        new Consumer<Object>() {
+                            @Override
+                            public void accept(Object o) throws Exception {
+                                //Do something on successful completion of all requests
+                                Timber.d("accept: " + o);
+                            }
+                        },
+
+                        // Will be triggered if any error during requests will happen
+                        new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable e) throws Exception {
+                                //Do something on error completion of requests
+                                Timber.d("accept: " + e.toString());
+                            }
+                        }
+                );
+
         //Observable<Response<Crypto>> observable_1 = cryptoCurrencyApi.getCoinDataDiff("btc");
         //Observable<Response<Crypto>> observable_2 = cryptoCurrencyApi.getCoinDataDiff("btc");
-
+/*
         Observable.zip(requests,
                 new Function<Object[],  List<Crypto.Market>>() {
                     @Override
@@ -358,9 +373,9 @@ public class MainActivity extends AppCompatActivity {
                         Timber.d("onComplete: ");
                     }
                 });
+*/
 
-
-        /* funciona
+        /*
         observable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -380,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
                             Timber.d("onComplete");
                         }
                     });
-   */
+
 
 
         /*
