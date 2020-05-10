@@ -37,13 +37,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(RecyclerViewAdapter.ViewHolder holder, int position) {
         Crypto.Market market = marketList.get(position);
-        holder.txtCoin.setText(market.coinName);
+
         holder.txtMarket.setText(market.market);
         holder.txtPrice.setText("$" + String.format("%.2f", Double.parseDouble(market.price)));
-        if (market.coinName.equalsIgnoreCase("eth")) {
-            holder.cardView.setCardBackgroundColor(Color.GRAY);
-        } else {
-            holder.cardView.setCardBackgroundColor(Color.GREEN);
+
+        if(market.coinName != null) {
+
+            holder.txtCoin.setText(market.coinName);
+            if (market.coinName.equalsIgnoreCase("eth")) {
+                holder.cardView.setCardBackgroundColor(Color.GRAY);
+            } else {
+                holder.cardView.setCardBackgroundColor(Color.GREEN);
+            }
+        }
+        else{
+            holder.txtCoin.setText("No coin name");
         }
 
     }

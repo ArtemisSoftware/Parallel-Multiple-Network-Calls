@@ -1,6 +1,7 @@
 package com.titan.multiplenetworkcalls;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -19,7 +20,6 @@ import timber.log.Timber;
 
 public class SingleCallActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
     RecyclerViewAdapter recyclerViewAdapter;
 
     @Override
@@ -27,6 +27,7 @@ public class SingleCallActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_calls);
 
+        initRecyclerView();
         callSingleEndpoint();
     }
 
@@ -47,6 +48,8 @@ public class SingleCallActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Crypto crypto) {
                         Timber.d("onNext: " + crypto.toString());
+
+                        recyclerViewAdapter.setData(crypto.ticker.markets);
                     }
 
                     @Override
@@ -60,6 +63,15 @@ public class SingleCallActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+
+
+    private void initRecyclerView(){
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewAdapter = new RecyclerViewAdapter();
+        recyclerView.setAdapter(recyclerViewAdapter);
     }
 
 
