@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
         //callSingleEndpoint();
         //callEndpoints();
-        callForResponseCode();
-        //callEndpoints_v2();
+        //callForResponseCode();
+        callEndpoints_v2();
     }
 
     private void callEndpoints_v2(){
@@ -61,6 +61,16 @@ public class MainActivity extends AppCompatActivity {
         CryptoCurrencyApi cryptoCurrencyApi = retrofit.create(CryptoCurrencyApi.class);
 
         CryptoCurrencyApi cryptoCurrencyApi_erro = retrofit_erro.create(CryptoCurrencyApi.class);
+
+
+        Observable<Observable<Response<Crypto>>> animalsObservable = Observable.just(cryptoCurrencyApi.getCoinDataDiff("eth"), cryptoCurrencyApi.getCoinDataDiff("eth"), cryptoCurrencyApi_erro.getCoinDataDiff("eth"));
+
+        Observer<Observable<Response<Crypto>>> animalsObserver = getAnimalsObserver();
+
+        animalsObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(animalsObserver);
 
         List<Observable<?>> requests = new ArrayList<>();
 
@@ -70,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         requests.add(cryptoCurrencyApi.getCoinData("eth"));
         requests.add(cryptoCurrencyApi_erro.getCoinData("eth"));
         //requests.add(cryptoCurrencyApi_erro.getCoinData("eth"));
-
+/*
         // Zip all requests with the Function, which will receive the results.
         Observable.zip(
                 requests,
@@ -108,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                                 Timber.d("accept-error: " + e);
                             }
                         }
-                )
+                )*/
                 /*
                 .subscribe(new Observer<Object>() {
                     @Override
@@ -134,6 +144,30 @@ public class MainActivity extends AppCompatActivity {
 */
 
         ;
+    }
+
+    private Observer<Observable<Response<Crypto>>> getAnimalsObserver() {
+        return new Observer<Observable<Response<Crypto>>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Timber.d("onSubscribe");
+            }
+
+            @Override
+            public void onNext(Observable<Response<Crypto>> s) {
+                Timber.d("onSubscribe");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.d("onSubscribe");
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.d("onSubscribe");
+            }
+        };
     }
 
 
@@ -292,6 +326,40 @@ public class MainActivity extends AppCompatActivity {
         requests.add(cryptoCurrencyApi.getCoinDataDiff("eth"));
         //requests.add(cryptoCurrencyApi_erro.getCoinData("eth"));
 
+
+
+
+        Observable.zip(
+                requests,
+                new Function<Object[], Object>() {
+                    @Override
+                    public Object apply(Object[] objects) throws Exception {
+                        // Objects[] is an array of combined results of completed requests
+
+                        // do something with those results and emit new event
+                        return new Object();
+                    }
+                })
+                // After all requests had been performed the next observer will receive the Object, returned from Function
+                .subscribe(
+                        // Will be triggered if all requests will end successfully (4xx and 5xx also are successful requests too)
+                        new Consumer<Object>() {
+                            @Override
+                            public void accept(Object o) throws Exception {
+                                //Do something on successful completion of all requests
+                                Timber.d("accept: " + o);
+                            }
+                        },
+
+                        // Will be triggered if any error during requests will happen
+                        new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable e) throws Exception {
+                                //Do something on error completion of requests
+                                Timber.d("accept: " + e.toString());
+                            }
+                        }
+                );
 
 
         // Zip all requests with the Function, which will receive the results.
