@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
@@ -48,12 +49,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = new Intent(this, SingleCallActivity.class);
+        startActivity(intent);
+
+        /*
         initCommunications();
         initRecyclerView();
         //callSingleEndpoint();
         //callEndpoints();
         //callForResponseCode();
         callEndpoints_v2();
+        */
     }
 
     private void callEndpoints_v2(){
