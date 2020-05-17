@@ -15,13 +15,19 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MultipleCallsActivity extends AppCompatActivity {
 
     RecyclerViewAdapter recyclerViewAdapter;
+
+    private Observable<List<Crypto.Market>> btcObservable, ethObservable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +35,16 @@ public class MultipleCallsActivity extends AppCompatActivity {
         setContentView(R.layout.content_calls);
 
         initRecyclerView();
+        initObservables();
 
         callMultipleEndpoint();
     }
 
-    private void callMultipleEndpoint(){
+    private void initObservables(){
 
         CryptoCurrencyApi cryptoCurrencyApi = NetworkService.getCurrencyApi();
 
-        Observable<List<Crypto.Market>> btcObservable = cryptoCurrencyApi.getCoinData("btc")
+        btcObservable = cryptoCurrencyApi.getCoinData("btc")
                 .map(new Function<Crypto, Observable<Crypto.Market>>() {
 
                     @Override
@@ -71,7 +78,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
                 .toList()
                 .toObservable();
 
-        Observable<List<Crypto.Market>> ethObservable = cryptoCurrencyApi.getCoinData("eth")
+        ethObservable = cryptoCurrencyApi.getCoinData("eth")
                 .map(new Function<Crypto, Observable<Crypto.Market>>() {
 
                     @Override
@@ -105,6 +112,35 @@ public class MultipleCallsActivity extends AppCompatActivity {
                 .toList()
                 .toObservable();
 
+    }
+
+    private void callMultipleEndpoint(){
+
+        Observable.merge(btcObservable, ethObservable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Observer<List<Crypto.Market>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(List<Crypto.Market> markets) {
+                recyclerViewAdapter.setData(markets);
+                Timber.d("onNext");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
 
     }
 
