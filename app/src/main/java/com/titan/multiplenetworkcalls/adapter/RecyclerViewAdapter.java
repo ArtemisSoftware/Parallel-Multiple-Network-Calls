@@ -52,6 +52,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
         else{
             holder.txtCoin.setText("No coin name");
+            holder.cardView.setCardBackgroundColor(Color.LTGRAY);
         }
 
     }
