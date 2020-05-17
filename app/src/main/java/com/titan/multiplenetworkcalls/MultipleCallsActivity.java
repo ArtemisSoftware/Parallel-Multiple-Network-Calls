@@ -39,7 +39,8 @@ public class MultipleCallsActivity extends AppCompatActivity {
         initRecyclerView();
         initObservables();
 
-        callMultipleEndpoint();
+        //callMultipleEndpoint();
+        zipMultipleCallsEndpoint();
     }
 
     private void initObservables(){
@@ -154,6 +155,101 @@ public class MultipleCallsActivity extends AppCompatActivity {
 
     private void zipMultipleCallsEndpoint(){
 
+        Observable.zip(requests,
+                new Function<Object[], List<Crypto.Market>>() {
+                    @Override
+                    public List<Crypto.Market> apply(Object[] objects) throws Exception {
+
+                        Timber.d("apply: " + objects);
+
+                        ArrayList<Crypto.Market> mm = new ArrayList<>();
+                        for (int i = 0; i < objects.length; ++i) {
+                            mm.addAll((ArrayList<Crypto.Market>) objects[i]);
+                        }
+
+                        return mm;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Crypto.Market>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Timber.d("onSubscribe: ");
+                    }
+
+                    @Override
+                    public void onNext(List<Crypto.Market> cryptos) {
+                        Timber.d("onNext: " + cryptos);
+
+                        recyclerViewAdapter.setData(cryptos);
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.d("onError: " + e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Timber.d("onComplete: ");
+                    }
+                });
+        
+        
+        /*
+        zio
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Observer<Object>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Object o) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        })*/
+/*
+        lolo
+                .subscribe(new Observer<List<Crypto.Market>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Timber.d("onSubscribe: ");
+                    }
+
+                    @Override
+                    public void onNext(List<Crypto.Market> cryptos) {
+                        Timber.d("onNext: " + cryptos);
+
+                        recyclerViewAdapter.setData(cryptos);
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.d("onError: " + e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Timber.d("onComplete: ");
+                    }
+                });
+        */
     }
 
 
