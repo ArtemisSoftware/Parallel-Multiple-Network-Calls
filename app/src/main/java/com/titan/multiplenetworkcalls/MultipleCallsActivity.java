@@ -11,6 +11,7 @@ import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
 import com.titan.multiplenetworkcalls.util.NetworkService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -28,6 +29,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
     RecyclerViewAdapter recyclerViewAdapter;
 
     private Observable<List<Crypto.Market>> btcObservable, ethObservable;
+    private List<Observable<List<Crypto.Market>>> requests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +114,10 @@ public class MultipleCallsActivity extends AppCompatActivity {
                 .toList()
                 .toObservable();
 
+        requests = new ArrayList<>();
+        requests.add(btcObservable);
+        requests.add(ethObservable);
+
     }
 
     private void callMultipleEndpoint(){
@@ -141,6 +147,12 @@ public class MultipleCallsActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+
+
+    private void zipMultipleCallsEndpoint(){
 
     }
 
