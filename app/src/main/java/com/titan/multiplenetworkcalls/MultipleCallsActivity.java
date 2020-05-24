@@ -124,30 +124,31 @@ public class MultipleCallsActivity extends AppCompatActivity {
     private void callMultipleEndpoint(){
 
         Observable.merge(btcObservable, ethObservable)
+
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Observer<List<Crypto.Market>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
+            .subscribe(new Observer<List<Crypto.Market>>() {
+                @Override
+                public void onSubscribe(Disposable d) {
 
-            }
+                }
 
-            @Override
-            public void onNext(List<Crypto.Market> markets) {
-                recyclerViewAdapter.setData(markets);
-                Timber.d("onNext");
-            }
+                @Override
+                public void onNext(List<Crypto.Market> markets) {
+                    recyclerViewAdapter.setData(markets);
+                    Timber.d("onNext");
+                }
 
-            @Override
-            public void onError(Throwable e) {
+                @Override
+                public void onError(Throwable e) {
 
-            }
+                }
 
-            @Override
-            public void onComplete() {
+                @Override
+                public void onComplete() {
 
-            }
-        });
+                }
+            });
 
     }
 

@@ -30,4 +30,23 @@ public class NetworkService {
         return retrofit.create(CryptoCurrencyApi.class);
     }
 
+    public static CryptoCurrencyApi getErrorCurrencyApi(){
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        Gson gson = new GsonBuilder().setLenient().create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(CryptoCurrencyApi.ERROR_URL)
+                .client(client)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        return retrofit.create(CryptoCurrencyApi.class);
+    }
+
+
 }
