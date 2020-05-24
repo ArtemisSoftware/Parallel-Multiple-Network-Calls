@@ -6,8 +6,11 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -21,7 +24,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         mProgressBar = constraintLayout.findViewById(R.id.progress_bar);
 
         getLayoutInflater().inflate(layoutResID, frameLayout, true);
-        super.setContentView(null/*constraintLayout*/);
+
+        super.setContentView(constraintLayout);
     }
 
     public void showProgressBar(boolean visible) {
@@ -37,4 +41,5 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .make(constraintLayout, "www.journaldev.com", Snackbar.LENGTH_LONG);
         snackbar.show();
     }
+
 }

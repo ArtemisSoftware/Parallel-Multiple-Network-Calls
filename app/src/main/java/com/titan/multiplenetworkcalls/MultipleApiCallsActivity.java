@@ -4,11 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class MultipleApiCallsActivity extends AppCompatActivity {
+public class MultipleApiCallsActivity extends MultipleActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_multiple_api_calls);
-    }
+
 }
