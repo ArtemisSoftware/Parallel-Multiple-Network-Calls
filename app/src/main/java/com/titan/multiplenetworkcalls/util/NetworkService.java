@@ -3,6 +3,7 @@ package com.titan.multiplenetworkcalls.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
+import com.titan.multiplenetworkcalls.api.JsonplaceholderApi;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -30,8 +31,8 @@ public class NetworkService {
         return retrofit.create(CryptoCurrencyApi.class);
     }
 
-/*
-    public static CryptoCurrencyApi getCurrencyApi(){
+
+    public static JsonplaceholderApi getJsonplaceholderApi(){
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -40,14 +41,14 @@ public class NetworkService {
         Gson gson = new GsonBuilder().setLenient().create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(CryptoCurrencyApi.BASE_URL)
+                .baseUrl(JsonplaceholderApi.BASE_URL)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        return retrofit.create(CryptoCurrencyApi.class);
+        return retrofit.create(JsonplaceholderApi.class);
     }
-*/
+
 
 }

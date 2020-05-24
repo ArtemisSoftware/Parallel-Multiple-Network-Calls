@@ -9,6 +9,8 @@ import retrofit2.http.GET;
 
 public interface JsonplaceholderApi {
 
+    String BASE_URL = "https://jsonplaceholder.typicode.com/";
+
     @GET("posts")
     Observable<List<Post>> getPosts();
 }
