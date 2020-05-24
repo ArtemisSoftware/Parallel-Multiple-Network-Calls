@@ -12,10 +12,12 @@ import retrofit2.http.Path;
 public interface CryptoCurrencyApi {
 
     String BASE_URL = "https://api.cryptonator.com/api/full/";
-    String ERROR_URL = "https://api.cryptonator.com/sdfapi/full/fake/";
 
     @GET("{coin}-usd")
     Observable<Crypto> getCoinData(@Path("coin") String coin);
+
+    @GET("error")
+    Observable<Crypto> getError();
 
 
     @GET("{coin}-usd")

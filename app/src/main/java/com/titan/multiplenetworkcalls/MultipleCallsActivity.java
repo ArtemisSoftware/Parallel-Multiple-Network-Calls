@@ -28,7 +28,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
 
     RecyclerViewAdapter recyclerViewAdapter;
 
-    private Observable<List<Crypto.Market>> btcObservable, ethObservable;
+    private Observable<List<Crypto.Market>> btcObservable, ethObservable, errorObservable;
     private List<Observable<List<Crypto.Market>>> requests;
 
     @Override
@@ -38,6 +38,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
 
         initRecyclerView();
         initObservables();
+        //initErrorObservables();
 
         //callMultipleEndpoint();
         zipMultipleCallsEndpoint();
@@ -121,9 +122,62 @@ public class MultipleCallsActivity extends AppCompatActivity {
 
     }
 
+
+
+    private void initErrorObservables(){
+
+        CryptoCurrencyApi cryptoCurrencyApi = NetworkService.getCurrencyApi();
+
+        errorObservable = cryptoCurrencyApi.getError()
+                .map(new Function<Crypto, Observable<Crypto.Market>>() {
+
+                    @Override
+                    public Observable<Crypto.Market> apply(Crypto crypto) throws Exception {
+
+                        //Transformar a lista de markets numa observable source
+                        Timber.d("onMap");
+                        return Observable.fromIterable(crypto.ticker.markets);
+                    }
+                })
+
+                .flatMap(new Function<Observable<Crypto.Market>, ObservableSource<Crypto.Market>>() {
+                    @Override
+                    public ObservableSource<Crypto.Market> apply(Observable<Crypto.Market> marketObservable) throws Exception {
+
+                        Timber.d("onflatMap");
+                        return marketObservable;
+                    }
+                })
+                .filter(new Predicate<Crypto.Market>() {
+                    @Override
+                    public boolean test(Crypto.Market market) throws Exception {
+
+                        Timber.d("onfilter: " + market.toString());
+
+                        //filtrar cada market emitido pelo flatmap
+                        market.coinName = "btc";
+                        return true;
+                    }
+                })
+                .toList()
+                .toObservable();
+
+
+        if(requests == null){
+            requests = new ArrayList<>();
+        }
+        requests.add(errorObservable);
+
+    }
+
+
+
+
+
+
     private void callMultipleEndpoint(){
 
-        Observable.merge(btcObservable, ethObservable)
+        Observable.merge(requests)
 
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -184,12 +238,11 @@ public class MultipleCallsActivity extends AppCompatActivity {
                         Timber.d("onNext: " + cryptos);
 
                         recyclerViewAdapter.setData(cryptos);
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.d("onError: " + e);
+                        Timber.d("onError: " + e.getMessage());
                     }
 
                     @Override
