@@ -59,6 +59,7 @@ public class MultipleApiCallsActivity extends MultipleActivity {
                 */
                 .toList()
                 .toObservable();
+
     }
 
 
