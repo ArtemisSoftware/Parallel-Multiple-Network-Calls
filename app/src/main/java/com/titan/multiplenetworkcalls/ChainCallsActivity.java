@@ -1,12 +1,17 @@
 package com.titan.multiplenetworkcalls;
 
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
+import com.titan.multiplenetworkcalls.api.JsonplaceholderApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
+import com.titan.multiplenetworkcalls.models.Post;
 import com.titan.multiplenetworkcalls.util.NetworkService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -16,7 +21,7 @@ import timber.log.Timber;
 
 public class ChainCallsActivity extends MultipleActivity{
 
-    private Observable<List<Crypto.Market>> baseObservable;
+    private Observable<List<Post>> postsObservable;
 
     @Override
     protected void initRequest() {
@@ -26,29 +31,95 @@ public class ChainCallsActivity extends MultipleActivity{
     }
 
     private void initBaseObservable(){
-        CryptoCurrencyApi cryptoCurrencyApi = NetworkService.getCurrencyApi();
+        JsonplaceholderApi jsonplaceholderApi = NetworkService.getJsonplaceholderApi();
 
 
-        baseObservable = cryptoCurrencyApi.getCoinData("btc")
-                .map(new Function<Crypto, Observable<Crypto.Market>>() {
-
+        postsObservable = jsonplaceholderApi.getPosts()
+                .map(new Function<List<Post>, List<String>>() {
                     @Override
-                    public Observable<Crypto.Market> apply(Crypto crypto) throws Exception {
+                    public List<String> apply(List<Post> posts) throws Exception {
 
-                        //Transformar a lista de markets numa observable source
-                        Timber.d("onMap");
-                        return Observable.fromIterable(crypto.ticker.markets);
+                        List<String> ids = new ArrayList<>();
+
+                        Random r = new Random();
+                        int low = 1, high = 10;
+                        ids.add((r.nextInt(high-low) + low) + "");
+                        ids.add((r.nextInt(high-low) + low) + "");
+
+                        return ids; // B.
                     }
                 })
-                .flatMap(new Function<Observable<Crypto.Market>, Observable<List<Crypto.Market>>>() {
+                .flatMap(new Function<List<String>, Observable<List<Post>>>() {
                     @Override
-                    public Observable<List<Crypto.Market>> apply(Observable<Crypto.Market> marketObservable) throws Exception {
-
-                        Timber.d("onflatMap");
-                        return ethObservable;
+                    public Observable<List<Post>> apply(List<String> ids) throws Exception {
+                        return searchPostsById(ids);
                     }
                 });
     }
+
+    private Observable<List<Post>> searchPostsById(List<String> ids){
+
+        JsonplaceholderApi jsonplaceholderApi = NetworkService.getJsonplaceholderApi();
+
+        List<Observable<List<Post>>> requests = new ArrayList<>();
+
+        for(String id : ids) {
+            requests.add(jsonplaceholderApi.getPostsUserId(id));
+        }
+
+        Observable<List<Post>> observable = Observable.zip(requests,
+
+                new Function<Object[], List<Post>>() {
+                    @Override
+                    public List<Post> apply(Object[] responses) throws Exception {
+
+                        Timber.d("apply: posts response: " + responses);
+
+                        List<Post> posts = new ArrayList<>();
+
+                        for (int i = 0; i < responses.length; ++i) {
+                            posts.add(((Post) responses[i]));
+                        }
+
+                        return posts;
+                    }
+                });
+        return observable;
+    }
+
+
+    private void chainCalls(){
+
+        postsObservable
+
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(
+
+                        new Observer<List<Post>>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(List<Post> posts) {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        }
+                );
+    }
+
 
 /*
     private Observable<List<Crypto.Market>> secondObservable(){
@@ -79,38 +150,7 @@ public class ChainCallsActivity extends MultipleActivity{
 
     }
 */
-    private void chainCalls(){
 
-        baseObservable
-
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(
-
-
-                        new Observer<List<Crypto.Market>>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onNext(List<Crypto.Market> markets) {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        }
-                );
-    }
 
     /*
     public void searchGallery(String nsid) {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface JsonplaceholderApi {
 
@@ -13,4 +14,9 @@ public interface JsonplaceholderApi {
 
     @GET("posts")
     Observable<List<Post>> getPosts();
+
+    @GET("posts?userId={id}")
+    Observable<List<Post>> getPostsUserId(@Path("id") String id);
+
+
 }
