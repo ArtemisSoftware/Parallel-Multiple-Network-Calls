@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
+import com.titan.multiplenetworkcalls.adapter.CryptoRecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.api.JsonplaceholderApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
@@ -29,7 +29,7 @@ import timber.log.Timber;
 
 public class MultipleCallsActivity extends AppCompatActivity {
 
-    RecyclerViewAdapter recyclerViewAdapter;
+    CryptoRecyclerViewAdapter cryptoRecyclerViewAdapter;
 
     private Observable<List<Crypto.Market>> btcObservable, ethObservable, errorObservable;
     private Observable<List<List<Post>>> jsonObservable;
@@ -222,7 +222,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
 
                 @Override
                 public void onNext(List<Crypto.Market> markets) {
-                    recyclerViewAdapter.setData(markets);
+                    cryptoRecyclerViewAdapter.setData(markets);
                     Timber.d("onNext");
                 }
 
@@ -270,7 +270,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
                     public void onNext(List<Crypto.Market> cryptos) {
                         Timber.d("onNext: " + cryptos);
 
-                        recyclerViewAdapter.setData(cryptos);
+                        cryptoRecyclerViewAdapter.setData(cryptos);
                     }
 
                     @Override
@@ -322,7 +322,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
                     public void onNext(List<Crypto.Market> cryptos) {
                         Timber.d("onNext: " + cryptos);
 
-                        recyclerViewAdapter.setData(cryptos);
+                        cryptoRecyclerViewAdapter.setData(cryptos);
 
                     }
 
@@ -381,7 +381,7 @@ public class MultipleCallsActivity extends AppCompatActivity {
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new RecyclerViewAdapter();
-        recyclerView.setAdapter(recyclerViewAdapter);
+        cryptoRecyclerViewAdapter = new CryptoRecyclerViewAdapter();
+        recyclerView.setAdapter(cryptoRecyclerViewAdapter);
     }
 }

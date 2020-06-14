@@ -6,11 +6,8 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
 
 public abstract class BaseActivity extends AppCompatActivity {
 

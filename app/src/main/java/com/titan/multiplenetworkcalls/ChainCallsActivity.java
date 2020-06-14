@@ -1,5 +1,9 @@
 package com.titan.multiplenetworkcalls;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.titan.multiplenetworkcalls.adapter.PostRecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.api.JsonplaceholderApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
@@ -22,10 +26,12 @@ import timber.log.Timber;
 public class ChainCallsActivity extends MultipleActivity{
 
     private Observable<List<Post>> postsObservable;
+    PostRecyclerViewAdapter postsRecyclerViewAdapter;
 
     @Override
     protected void initRequest() {
 
+        initPostRecyclerView();
         initBaseObservable();
         chainCalls();
     }
@@ -120,6 +126,13 @@ public class ChainCallsActivity extends MultipleActivity{
                 );
     }
 
+
+    private void initPostRecyclerView(){
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        postsRecyclerViewAdapter = new PostRecyclerViewAdapter();
+        recyclerView.setAdapter(postsRecyclerViewAdapter);
+    }
 
 /*
     private Observable<List<Crypto.Market>> secondObservable(){

@@ -9,12 +9,9 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
+import com.titan.multiplenetworkcalls.adapter.CryptoRecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
-
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +24,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -42,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Retrofit retrofit, retrofit_erro;
 
     RecyclerView recyclerView;
-    RecyclerViewAdapter recyclerViewAdapter;
+    CryptoRecyclerViewAdapter cryptoRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -303,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(List<Crypto.Market> cryptos) {
                         Timber.d("onNext: " + cryptos);
 
-                        recyclerViewAdapter.setData(cryptos);
+                        cryptoRecyclerViewAdapter.setData(cryptos);
 
                     }
 
@@ -436,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(List<Crypto.Market> cryptos) {
                         Timber.d("onNext: " + cryptos);
 
-                        recyclerViewAdapter.setData(cryptos);
+                        cryptoRecyclerViewAdapter.setData(cryptos);
 
                     }
 
@@ -524,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new RecyclerViewAdapter();
-        recyclerView.setAdapter(recyclerViewAdapter);
+        cryptoRecyclerViewAdapter = new CryptoRecyclerViewAdapter();
+        recyclerView.setAdapter(cryptoRecyclerViewAdapter);
     }
 }

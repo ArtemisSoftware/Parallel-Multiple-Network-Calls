@@ -15,27 +15,27 @@ import com.titan.multiplenetworkcalls.models.Crypto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class CryptoRecyclerViewAdapter extends RecyclerView.Adapter<CryptoRecyclerViewAdapter.CryptoViewHolder> {
 
     private List<Crypto.Market> marketList;
 
 
-    public RecyclerViewAdapter() {
+    public CryptoRecyclerViewAdapter() {
         marketList = new ArrayList<>();
     }
 
     @Override
-    public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                             int viewType) {
+    public CryptoViewHolder onCreateViewHolder(ViewGroup parent,
+                                               int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item_layout, parent, false);
 
-        RecyclerViewAdapter.ViewHolder viewHolder = new RecyclerViewAdapter.ViewHolder(view);
-        return viewHolder;
+        CryptoViewHolder cryptoViewHolder = new CryptoViewHolder(view);
+        return cryptoViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(CryptoViewHolder holder, int position) {
         Crypto.Market market = marketList.get(position);
 
         holder.txtMarket.setText(market.market);
@@ -67,14 +67,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class CryptoViewHolder extends RecyclerView.ViewHolder {
 
         public TextView txtCoin;
         public TextView txtMarket;
         public TextView txtPrice;
         public CardView cardView;
 
-        public ViewHolder(View view) {
+        public CryptoViewHolder(View view) {
             super(view);
 
             txtCoin = view.findViewById(R.id.txtCoin);

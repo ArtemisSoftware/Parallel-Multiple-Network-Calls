@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
+import com.titan.multiplenetworkcalls.adapter.CryptoRecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
 import com.titan.multiplenetworkcalls.util.NetworkService;
@@ -27,7 +27,7 @@ import timber.log.Timber;
 
 public class SingleCallActivity extends AppCompatActivity {
 
-    RecyclerViewAdapter recyclerViewAdapter;
+    CryptoRecyclerViewAdapter cryptoRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class SingleCallActivity extends AppCompatActivity {
                     @Override
                     public void onNext(List<Crypto.Market> markets) {
 
-                        recyclerViewAdapter.setData(markets);
+                        cryptoRecyclerViewAdapter.setData(markets);
                         Timber.d("onNext");
                     }
 
@@ -109,8 +109,8 @@ public class SingleCallActivity extends AppCompatActivity {
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new RecyclerViewAdapter();
-        recyclerView.setAdapter(recyclerViewAdapter);
+        cryptoRecyclerViewAdapter = new CryptoRecyclerViewAdapter();
+        recyclerView.setAdapter(cryptoRecyclerViewAdapter);
     }
 
 

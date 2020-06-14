@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.titan.multiplenetworkcalls.adapter.RecyclerViewAdapter;
+import com.titan.multiplenetworkcalls.adapter.CryptoRecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.api.JsonplaceholderApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
@@ -25,7 +25,7 @@ public abstract class MultipleActivity extends BaseActivity {
     protected Observable<List<Crypto.Market>> btcObservable, ethObservable, errorObservable;
     protected List<Observable<List<Crypto.Market>>> requests;
 
-    RecyclerViewAdapter recyclerViewAdapter;
+    CryptoRecyclerViewAdapter cryptoRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public abstract class MultipleActivity extends BaseActivity {
         setContentView(R.layout.content_calls);
 
 
-        initRecyclerView();
+        initCryptoRecyclerView();
 
         initObservables();
 
@@ -177,12 +177,14 @@ public abstract class MultipleActivity extends BaseActivity {
 
 
 
-    private void initRecyclerView(){
+    private void initCryptoRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new RecyclerViewAdapter();
-        recyclerView.setAdapter(recyclerViewAdapter);
+        cryptoRecyclerViewAdapter = new CryptoRecyclerViewAdapter();
+        recyclerView.setAdapter(cryptoRecyclerViewAdapter);
     }
+
+
 
 
     protected abstract void initRequest();
