@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         //intent = new Intent(this, SingleCallActivity.class);
         //intent = new Intent(this, MultipleCallsActivity.class);
         intent = new Intent(this, MultipleApiCallsActivity.class);
+        intent = new Intent(this, ChainCallsActivity.class);
         startActivity(intent);
 
         /*

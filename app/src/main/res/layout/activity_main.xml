@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_single_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Single Call"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_multiple_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Multiple Call"
+        app:layout_constraintEnd_toEndOf="@+id/btn_single_call"
+        app:layout_constraintStart_toStartOf="@+id/btn_single_call"
+        app:layout_constraintTop_toBottomOf="@+id/btn_single_call" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_multiple_api_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Multiple Api Call"
+        app:layout_constraintEnd_toEndOf="@+id/btn_multiple_call"
+        app:layout_constraintStart_toStartOf="@+id/btn_multiple_call"
+        app:layout_constraintTop_toBottomOf="@+id/btn_multiple_call" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_chain_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Multiple Api Call"
+        app:layout_constraintEnd_toEndOf="@+id/btn_multiple_api_call"
+        app:layout_constraintStart_toStartOf="@+id/btn_multiple_api_call"
+        app:layout_constraintTop_toBottomOf="@+id/btn_multiple_api_call" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

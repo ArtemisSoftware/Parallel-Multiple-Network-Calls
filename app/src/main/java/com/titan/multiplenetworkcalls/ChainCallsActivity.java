@@ -110,7 +110,7 @@ public class ChainCallsActivity extends MultipleActivity{
 
                             @Override
                             public void onNext(List<Post> posts) {
-
+                                postsRecyclerViewAdapter.setData(posts);
                             }
 
                             @Override
