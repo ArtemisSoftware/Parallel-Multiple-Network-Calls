@@ -10,8 +10,8 @@ import retrofit2.http.GET;
 public interface VivamaisApi {
 
 
-    String BASE_URL = "";
+    String BASE_URL = "http://www.vivamais.com/tablet_hsa_ws/service.asmx/GetTiposAnomalia?dataT";
 
-    //@GET("posts")
-    //Observable<List<Post>> getType();
+    @GET("")
+    Observable<List<Post>> getType();
 }
