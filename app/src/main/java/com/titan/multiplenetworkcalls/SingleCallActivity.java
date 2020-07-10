@@ -9,7 +9,9 @@ import android.widget.Toast;
 
 import com.titan.multiplenetworkcalls.adapter.CryptoRecyclerViewAdapter;
 import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
+import com.titan.multiplenetworkcalls.api.VivamaisApi;
 import com.titan.multiplenetworkcalls.models.Crypto;
+import com.titan.multiplenetworkcalls.models.TypeVvm;
 import com.titan.multiplenetworkcalls.util.NetworkService;
 
 import java.util.List;
@@ -40,6 +42,34 @@ public class SingleCallActivity extends AppCompatActivity {
 
     private void callSingleEndpoint(){
 
+        VivamaisApi vivamaisApi = NetworkService.getVivaMaisApi();
+
+        vivamaisApi.getType()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<TypeVvm>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(TypeVvm typeVvm) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+        /*
         CryptoCurrencyApi cryptoCurrencyApi = NetworkService.getCurrencyApi();
 
         cryptoCurrencyApi.getCoinData("btc")
@@ -101,7 +131,7 @@ public class SingleCallActivity extends AppCompatActivity {
                         Timber.d("onComplete");
                     }
                 });
-
+*/
     }
 
 

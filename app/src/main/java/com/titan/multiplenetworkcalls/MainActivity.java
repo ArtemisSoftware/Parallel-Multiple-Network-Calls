@@ -46,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Intent intent;
-        //intent = new Intent(this, SingleCallActivity.class);
+        intent = new Intent(this, SingleCallActivity.class);
         //intent = new Intent(this, MultipleCallsActivity.class);
-        intent = new Intent(this, MultipleApiCallsActivity.class);
-        intent = new Intent(this, ChainCallsActivity.class);
+        //intent = new Intent(this, MultipleApiCallsActivity.class);
+        //intent = new Intent(this, ChainCallsActivity.class);
         startActivity(intent);
 
         /*

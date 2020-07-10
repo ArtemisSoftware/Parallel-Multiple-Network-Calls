@@ -1,6 +1,7 @@
 package com.titan.multiplenetworkcalls.api;
 
 import com.titan.multiplenetworkcalls.models.Post;
+import com.titan.multiplenetworkcalls.models.TypeVvm;
 
 import java.util.List;
 
@@ -10,8 +11,8 @@ import retrofit2.http.GET;
 public interface VivamaisApi {
 
 
-    String BASE_URL = "http://www.vivamais.com/tablet_hsa_ws/service.asmx/GetTiposAnomalia?dataT";
+    String BASE_URL = "http://www.vivamais.com/tablet_hsa_ws/service.asmx/";
 
-    @GET("")
-    Observable<List<Post>> getType();
+    @GET("GetTiposAnomalia?dataT=")
+    Observable<TypeVvm> getType();
 }
