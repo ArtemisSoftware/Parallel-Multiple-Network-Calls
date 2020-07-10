@@ -53,9 +53,11 @@ public class NetworkService {
 
     public static VivamaisApi getVivaMaisApi(){
 
+        VvmInterceptor vvmInterceptor = new VvmInterceptor();
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor(vvmInterceptor).build();
+
 
         Gson gson = new GsonBuilder().setLenient().create();
 
