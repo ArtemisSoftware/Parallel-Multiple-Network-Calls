@@ -14,5 +14,11 @@ public interface VivamaisApi {
     String BASE_URL = "http://www.vivamais.com/tablet_hsa_ws/service.asmx/";
 
     @GET("GetTiposAnomalia?dataT=")
-    Observable<TypeVvm> getType();
+    Observable<TypeVvm> getTiposAnomalia();
+
+    @GET("GetCrossSellingTpTipo?dataT=")
+    Observable<TypeVvm> getCrossSellingTpTipo();
+
+    @GET("GetUtilizadores?dataT=")
+    Observable<TypeVvm> getUtilizadores();
 }

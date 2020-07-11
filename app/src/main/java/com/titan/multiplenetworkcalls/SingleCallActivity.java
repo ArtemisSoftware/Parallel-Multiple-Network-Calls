@@ -5,26 +5,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.titan.multiplenetworkcalls.adapter.CryptoRecyclerViewAdapter;
-import com.titan.multiplenetworkcalls.api.CryptoCurrencyApi;
 import com.titan.multiplenetworkcalls.api.VivamaisApi;
-import com.titan.multiplenetworkcalls.models.Crypto;
 import com.titan.multiplenetworkcalls.models.TypeVvm;
 import com.titan.multiplenetworkcalls.util.NetworkService;
 
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 
 public class SingleCallActivity extends AppCompatActivity {
@@ -44,7 +34,7 @@ public class SingleCallActivity extends AppCompatActivity {
 
         VivamaisApi vivamaisApi = NetworkService.getVivaMaisApi();
 
-        vivamaisApi.getType()
+        vivamaisApi.getTiposAnomalia()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<TypeVvm>() {
